@@ -6,7 +6,7 @@ const Constraint = Matter.Constraint;
 var backImg, backgroundImg, craft1Img, spaceCraft,spaceCraft1, bombImg, bomb, explosionImg, playImg;
 var bombGroup, gameState = "start", craft2Img,craft3Img,craft4Img, finishImg, finish, homeP;
 var homeImg, playB, boomS, feedback_img, feedback;
-var clickS, explosion1Img, coinImg, coin;
+var clickS, explosion1Img, coinImg, coin, coinS;
 var level = 1;
 var finishGroup, CoinGroup;
 
@@ -26,6 +26,8 @@ function preload(){
     feedback_img = loadImage("images/feedback1.jpg");
     boomS = loadSound("sound/boom.wav");
     clickS = loadSound("sound/click.mp3");
+    coinS = loadSound("sound/coin.wav");
+
 }
 
 function setup(){
@@ -124,8 +126,7 @@ function draw(){
         }
         if(CoinGroup.isTouching(spaceCraft)){
             CoinGroup.destroyEach();
-            clickS.play();
-        
+            coinS.play();
         }
         if(bombGroup.isTouching(spaceCraft)){
             spaceCraft.changeAnimation("explosion");
@@ -167,6 +168,10 @@ function draw(){
             level = 3;
             console.log("level 2 ended")
         }
+        if(CoinGroup.isTouching(spaceCraft)){
+            CoinGroup.destroyEach();
+            coinS.play();
+        }
         if(bombGroup.isTouching(spaceCraft)){
             spaceCraft.changeAnimation("explosion");
             spaceCraft.scale = 1.5;
@@ -206,6 +211,10 @@ function draw(){
             level = 4;
             console.log("level 3 ended")
         }
+        if(CoinGroup.isTouching(spaceCraft)){
+            CoinGroup.destroyEach();
+            coinS.play();
+        }
         if(bombGroup.isTouching(spaceCraft)){
             spaceCraft.changeAnimation("explosion");
             spaceCraft.scale = 1.5;
@@ -229,8 +238,8 @@ function draw(){
         if(backgroundImg.y > 700){
             backgroundImg.y = backgroundImg.height/5;
         }
-        if(spaceCraft.x < 100){
-            spaceCraft.x = 100;
+        if(spaceCraft.x < 50){
+            spaceCraft.x = 50;
         }
         if(spaceCraft.x > width - 100){
             spaceCraft.x = width - 100;
@@ -245,6 +254,10 @@ function draw(){
         //     level = 3;
         //     console.log("level 2 ended")
         // }
+        if(CoinGroup.isTouching(spaceCraft)){
+            CoinGroup.destroyEach();
+            coinS.play();
+        }
         if(bombGroup.isTouching(spaceCraft)){
             spaceCraft.changeAnimation("explosion");
             spaceCraft.scale = 1.5;
@@ -279,10 +292,10 @@ function draw(){
        }    
     }
     function spawnCoin(){
-        if(frameCount %80 === 0){
+        if(frameCount %10 === 0){
             coin = createSprite(random(100,width-100),0,100);
             coin.addImage(coinImg);
-            coin.scale = 0.04;
+            coin.scale = 0.02;
             coin.velocityY = 10;
             coin.lifetime = 500;
             CoinGroup.add(coin);
