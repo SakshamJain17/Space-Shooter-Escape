@@ -5,10 +5,10 @@ const Constraint = Matter.Constraint;
 
 var backImg, backgroundImg, craft1Img, spaceCraft,spaceCraft1, bombImg, bomb, explosionImg, playImg;
 var bombGroup, gameState = "start", craft2Img,craft3Img,craft4Img, finishImg, finish, homeP;
-var homeImg, playB, boomS, feedback_img, feedback;
-var clickS, explosion1Img, coinImg, coin, coinS;
-var level = 1;
-var finishGroup, CoinGroup;
+var homeImg, playB, boomS, feedback_img, feedback, fuelImg, fuel = 300;
+var clickS, explosion1Img, coinImg, coin, coinS, levelGroup;
+var level = 1, level2Img, level2;
+var finishGroup, CoinGroup, count= 0;
 
 function preload(){
     backImg = loadImage("images/background.jpg");
@@ -23,6 +23,8 @@ function preload(){
     playImg = loadImage("images/play.png");
     homeImg = loadImage("images/homeP.jpg");
     coinImg = loadImage("images/coin.png");
+    level2Img = loadImage("images/level2.png");
+    fuelImg = loadImage("images/fuel.png");
     feedback_img = loadImage("images/feedback1.jpg");
     boomS = loadSound("sound/boom.wav");
     clickS = loadSound("sound/click.mp3");
@@ -41,6 +43,8 @@ backgroundImg.velocityY = 10;
     spaceCraft = createSprite(width/2,600,100,100);
     spaceCraft.addImage(craft1Img);
     spaceCraft.scale = 0.4;
+    //spaceCraft.debug = true;
+    spaceCraft.setCollider("circle", 0, 0, 180)
 spaceCraft.addImage("2",craft2Img);
 spaceCraft.addImage("3",craft3Img);
 spaceCraft.addImage("4",craft4Img);
@@ -49,6 +53,7 @@ spaceCraft.addImage("explosion", explosionImg);
 bombGroup = new Group();
 finishGroup = new Group(); 
 CoinGroup = new Group(); 
+levelGroup = new Group(); 
 
 homeP = createSprite(width/2,height/2,100,100);
 homeP.addImage(homeImg);
@@ -85,6 +90,10 @@ feedback.visible = false;
 
 function draw(){
     background("red");
+    drawSprites();
+    
+
+
     if(mousePressedOver(playB)&& gameState === "start"){
         homeP.destroy();
         spaceCraft1.destroy();
@@ -94,6 +103,8 @@ function draw(){
         gameState = "play";
         clickS.play();
         playB.destroy();
+
+
 
     }
 
@@ -115,19 +126,33 @@ function draw(){
         if(spaceCraft.x > width - 100){
             spaceCraft.x = width - 100;
         }
+        spaceCraft.overlap(CoinGroup, removeCoin);
+        
+        fill("red");
+        text("COINS:"+ count, 100,200);
+
         //clickS.stop();
        //clickS.destroy();
+       spawnLevel2();
         spawnBomb();
         spawnFinish();
         spawnCoin();
-        if(finishGroup.isTouching(spaceCraft)){
+        showFuelBar();
+
+        fuel = fuel-0.5;
+        //console.log(fuel);
+        if(fuel<0){
+            gameState = "end";
+        }
+        if(levelGroup.isTouching(spaceCraft)){
             level = 2;
             console.log("level 1 ended")
+            
         }
-        if(CoinGroup.isTouching(spaceCraft)){
-            CoinGroup.destroyEach();
-            coinS.play();
-        }
+        // if(CoinGroup.isTouching(spaceCraft)){
+        //     CoinGroup.destroyEach();
+        //     coinS.play();
+        // }
         if(bombGroup.isTouching(spaceCraft)){
             spaceCraft.changeAnimation("explosion");
             spaceCraft.scale = 1.5;
@@ -158,20 +183,30 @@ function draw(){
         if(spaceCraft.x > width - 100){
             spaceCraft.x = width - 100;
         }
+        fill("red");
+        text("COINS:"+ count, 100,200);
         //clickS.stop();
        //clickS.destroy();
         spawnBomb();
         spawnFinish();
         spawnCoin();
+        showFuelBar();
+
+        fuel = fuel-0.5;
+        //console.log(fuel);
+        if(fuel<0){
+            gameState = "end";
+        }
+        spaceCraft.overlap(CoinGroup, removeCoin);
 
         if(finishGroup.isTouching(spaceCraft)){
             level = 3;
             console.log("level 2 ended")
         }
-        if(CoinGroup.isTouching(spaceCraft)){
-            CoinGroup.destroyEach();
-            coinS.play();
-        }
+        // if(CoinGroup.isTouching(spaceCraft)){
+        //     CoinGroup.destroyEach();
+        //     coinS.play();
+        // }
         if(bombGroup.isTouching(spaceCraft)){
             spaceCraft.changeAnimation("explosion");
             spaceCraft.scale = 1.5;
@@ -201,20 +236,23 @@ function draw(){
         if(spaceCraft.x > width - 100){
             spaceCraft.x = width - 100;
         }
+        fill("red");
+        text("COINS:"+ count, 100,200);
         //clickS.stop();
        //clickS.destroy();
         spawnBomb();
         spawnFinish();
         spawnCoin();
+        spaceCraft.overlap(CoinGroup, removeCoin);
 
         if(finishGroup.isTouching(spaceCraft)){
             level = 4;
             console.log("level 3 ended")
         }
-        if(CoinGroup.isTouching(spaceCraft)){
-            CoinGroup.destroyEach();
-            coinS.play();
-        }
+        // if(CoinGroup.isTouching(spaceCraft)){
+        //     CoinGroup.destroyEach();
+        //     coinS.play();
+        // }
         if(bombGroup.isTouching(spaceCraft)){
             spaceCraft.changeAnimation("explosion");
             spaceCraft.scale = 1.5;
@@ -244,20 +282,26 @@ function draw(){
         if(spaceCraft.x > width - 100){
             spaceCraft.x = width - 100;
         }
+        fill("red");
+        text("COINS:"+ count, 100,200);
         //clickS.stop();
        //clickS.destroy();
         spawnBomb();
         spawnFinish();
         spawnCoin();
+        spaceCraft.overlap(CoinGroup, removeCoin);
 
         // if(finishGroup.isTouching(spaceCraft)){
         //     level = 3;
         //     console.log("level 2 ended")
         // }
-        if(CoinGroup.isTouching(spaceCraft)){
-            CoinGroup.destroyEach();
-            coinS.play();
-        }
+        // for(var i = 0; i < CoinGroup.length ; i++){
+        //     if(CoinGroup.get(i).isTouching(spaceCraft)){
+        //         CoinGroup.destroyEach();
+        //         coinS.play();
+        //     }
+        // }
+       
         if(bombGroup.isTouching(spaceCraft)){
             spaceCraft.changeAnimation("explosion");
             spaceCraft.scale = 1.5;
@@ -276,33 +320,34 @@ function draw(){
         backgroundImg.velocityY = 0;
         
     }
-
     
     
-    drawSprites();
+    
 }
     function spawnBomb(){
        if(frameCount %80 === 0){
         bomb = createSprite(random(100,width-50),0,100);
         bomb.addImage(bombImg);
         bomb.scale = 0.2;
-        bomb.velocityY = 10;
+        //bomb.rotation = 45;
+        bomb.velocityY = random(15, 20);
+        bomb.velocityX = random(-15, 15);
         bomb.lifetime = 500;
         bombGroup.add(bomb);
        }    
     }
     function spawnCoin(){
-        if(frameCount %10 === 0){
+        if(frameCount %50 === 0){
             coin = createSprite(random(100,width-100),0,100);
             coin.addImage(coinImg);
-            coin.scale = 0.02;
+            coin.scale = 0.02;  
             coin.velocityY = 10;
             coin.lifetime = 500;
             CoinGroup.add(coin);
            }
     }
     function spawnFinish(){
-        if(frameCount %100 === 0){
+        if(frameCount %1000 === 0){
         finish = createSprite(width/2,height/7,150,100);
         finish.addImage(finishImg);
         finish.scale = 1.2;
@@ -310,6 +355,28 @@ function draw(){
         finish.velocityY = 10;
         finishGroup.add(finish);
         }
+    }
+    function spawnLevel2(){
+        if(frameCount %100 === 0){
+        level2 = createSprite(width/2,height/7,150,100);
+        level2.addImage(level2Img);
+        level2.scale = 0.08;
+        level2.lifetime = 500;
+        level2.velocityY = 10;
+        levelGroup.add(level2);
+        }
+    }
+    function removeCoin(spaceCraft, coin) {
+        coin.remove();
+        coinS.play();
+        count = count+ 1;
+    }
+    function showFuelBar(){
+       fill("white"); 
+       rect(300,50,300,30); 
+
+       fill("red");
+       rect(300,50,fuel,30);
     }
         
 
