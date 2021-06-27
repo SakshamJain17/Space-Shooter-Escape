@@ -6,8 +6,8 @@ const Constraint = Matter.Constraint;
 var backImg, backgroundImg, craft1Img, spaceCraft,spaceCraft1, bombImg, bomb, explosionImg, playImg;
 var bombGroup, gameState = "start", craft2Img,craft3Img,craft4Img, finishImg, finish, homeP;
 var homeImg, playB, boomS, feedback_img, feedback, fuelImg, fuel = 300;
-var clickS, explosion1Img, coinImg, coin, coinS, levelGroup;
-var level = 1, level2Img, level2, restartIMG, restart;
+var clickS, explosion1Img, coinImg, coin, coinS, levelGroup,level2Group,leve3Group,level4Img, level4;
+var level = 1, level2Img, level2, restartIMG, restart, level3Img, level3;
 var finishGroup, CoinGroup, count= 0,fuelGroup, fuel1 ;
 
 function preload(){
@@ -24,6 +24,8 @@ function preload(){
     homeImg = loadImage("images/homeP.jpg");
     coinImg = loadImage("images/coin.png");
     level2Img = loadImage("images/level2.png");
+    level3Img = loadImage("images/level3.png");
+    level4Img = loadImage("images/level4.png");
     fuelImg = loadImage("images/fuel.png");
     restartImg = loadImage("images/restart.png");
     feedback_img = loadImage("images/feedback1.jpg");
@@ -55,6 +57,8 @@ bombGroup = new Group();
 finishGroup = new Group(); 
 CoinGroup = new Group(); 
 levelGroup = new Group(); 
+level2Group = new Group(); 
+level3Group = new Group(); 
 fuelGroup = new Group(); 
 
 
@@ -130,28 +134,53 @@ function draw(){
         if(spaceCraft.x > width - 100){
             spaceCraft.x = width - 100;
         }
+        if(fuel<0){
+            swal.fire({
+
+                text: 'FUEL EMPTY😮',
+                confirmButtonText: "Restart",
+                imageUrl: "images/fuelempty.png",
+                imageWidth: 100,
+                imageHeight: 200,
+                imageAlt: 'Custom image',
+                position: 'center',
+                animation: true
+            })
+            .then((result) => {
+                if (result.isConfirmed) {
+                  
+           gameState = "play";
+        }
+    
+    }) }
         spaceCraft.overlap(CoinGroup, removeCoin);
-        
+        spaceCraft.overlap(fuelGroup, removeFuel);
         fill("red");
         text("COINS:"+ count, 100,200);
 
         //clickS.stop();
        //clickS.destroy();
-       spawnLevel2();
+        spawnLevel2();
+        spawnLevel3();
+        spawnLevel4();
         spawnBomb();
         spawnFinish();
         spawnCoin();
         showFuelBar();
         spawnFuel();
         fuel = fuel-0.3;
-        //console.log(fuel);
-        if(fuel<0){
-            gameState = "end";
+        if(spaceCraft.isTouching(fuelGroup)){
+            fuel = 300
         }
+        //console.log(fuel);
+        
         if(levelGroup.isTouching(spaceCraft)){
             level = 2;
             console.log("level 1 ended")
             
+        }
+        if(spaceCraft.isTouching(fuelGroup)){
+            fuel = 300
         }
         // if(CoinGroup.isTouching(spaceCraft)){
         //     CoinGroup.destroyEach();
@@ -191,14 +220,18 @@ function draw(){
         text("COINS:"+ count, 100,200);
         //clickS.stop();
        //clickS.destroy();
-        spawnBomb();
-        spawnFuel();
-        spawnFinish();
-        spawnCoin();
-        showFuelBar();
-        
-
-        fuel = fuel-2;
+       spawnLevel2();
+       spawnLevel3();
+       spawnLevel4();
+       spawnBomb();
+       spawnFinish();
+       spawnCoin();
+       showFuelBar();
+       spawnFuel();
+        fuel = fuel-0.3;
+        if(spaceCraft.isTouching(fuelGroup)){
+            fuel = 300
+        }
         //console.log(fuel);
         if(fuel<0){
             swal.fire({
@@ -212,11 +245,17 @@ function draw(){
                 position: 'center',
                 animation: true
             })
-            level = 1;
+            .then((result) => {
+                if (result.isConfirmed) {
+                  
+           gameState = "play";
         }
+    
+    }) }
         spaceCraft.overlap(CoinGroup, removeCoin);
+        spaceCraft.overlap(fuelGroup, removeFuel);
 
-        if(finishGroup.isTouching(spaceCraft)){
+        if(level2Group.isTouching(spaceCraft)){
             level = 3;
             console.log("level 2 ended")
         }
@@ -257,16 +296,22 @@ function draw(){
         text("COINS:"+ count, 100,200);
         //clickS.stop();
        //clickS.destroy();
+       spawnLevel2();
+       spawnLevel3();
+       spawnLevel4();
        spawnBomb();
-       spawnFuel();
        spawnFinish();
        spawnCoin();
        showFuelBar();
+       spawnFuel();
         spaceCraft.overlap(CoinGroup, removeCoin);
 
-        if(finishGroup.isTouching(spaceCraft)){
+        if(level3Group.isTouching(spaceCraft)){
             level = 4;
             console.log("level 3 ended")
+        }
+        if(spaceCraft.isTouching(fuelGroup)){
+            fuel = 300
         }
         // if(CoinGroup.isTouching(spaceCraft)){
         //     CoinGroup.destroyEach();
@@ -305,11 +350,14 @@ function draw(){
         text("COINS:"+ count, 100,200);
         //clickS.stop();
        //clickS.destroy();
-       spawnBomb();
-       spawnFuel();
-       spawnFinish();
-       spawnCoin();
-       showFuelBar();
+       spawnLevel2();
+        spawnLevel3();
+        spawnLevel4();
+        spawnBomb();
+        spawnFinish();
+        spawnCoin();
+        showFuelBar();
+        spawnFuel();
         spaceCraft.overlap(CoinGroup, removeCoin);
 
         // if(finishGroup.isTouching(spaceCraft)){
@@ -383,7 +431,7 @@ function draw(){
            }
     }
     function spawnFinish(){
-        if(frameCount %1000 === 0){
+        if(frameCount %4000 === 0){
         finish = createSprite(width/2,height/7,150,100);
         finish.addImage(finishImg);
         finish.scale = 1.2;
@@ -400,6 +448,26 @@ function draw(){
         level2.lifetime = 500;
         level2.velocityY = 10;
         levelGroup.add(level2);
+        }
+    }
+    function spawnLevel3(){
+        if(frameCount %1000 === 0){
+        level3 = createSprite(width/2,height/7,150,100);
+        level3.addImage(level3Img);
+        level3.scale = 0.08;
+        level3.lifetime = 1000;
+        level3.velocityY = 10;
+        level2Group.add(level3);
+        }
+    }
+    function spawnLevel4(){
+        if(frameCount %1500 === 0){
+        level4 = createSprite(width/2,height/7,150,100);
+        level4.addImage(level4Img);
+        level4.scale = 0.08;
+        level4.lifetime = 500;
+        level4.velocityY = 10;
+        level3Group.add(level4);
         }
     }
     function removeCoin(spaceCraft, coin) {
@@ -423,6 +491,11 @@ function draw(){
             fuel1.velocityY = 10;
             fuelGroup.add(fuel1);
            }
+    }
+    function removeFuel(spaceCraft, fuel1) {
+        fuel1.remove();
+        coinS.play();
+    
     }
         
 
